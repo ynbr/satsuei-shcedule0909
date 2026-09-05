@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>9/9 インタビュー撮影タイムテーブル</title>
+<style>
+:root{--bg:#0b0d10;--panel:#13171d;--panel2:#1b2028;--text:#f5f7fa;--muted:#94a0ae;--line:#29313b;--white:#fff;--danger:#ff6b6b;--warn:#ffcf66;}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",Meiryo,sans-serif}
+body{overflow:hidden}
+.app{height:100dvh;display:grid;grid-template-columns:41% 59%;gap:16px;padding:16px}
+.left{display:grid;grid-template-rows:auto 1fr auto;gap:14px;min-width:0;min-height:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:22px}
+.clockCard{padding:18px 22px}
+.eyebrow{font-size:12px;letter-spacing:.13em;color:var(--muted);font-weight:700}
+#clock{font-size:clamp(56px,8vw,102px);font-weight:800;letter-spacing:-.055em;line-height:1;font-variant-numeric:tabular-nums;margin-top:3px}
+#date{font-size:16px;color:var(--muted);margin-top:7px}
+.current{padding:22px;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+.current.shoot{background:#f5f7fa;color:#0b0d10;border-color:#f5f7fa}
+.current.shoot .muted,.current.shoot .eyebrow{color:#5e6670}
+.statusRow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.statusPill{font-size:12px;font-weight:800;border:1px solid currentColor;padding:6px 10px;border-radius:999px;white-space:nowrap}
+#currentTime{font-size:clamp(24px,3vw,38px);font-weight:800;font-variant-numeric:tabular-nums}
+#currentTitle{font-size:clamp(31px,4.1vw,52px);font-weight:850;line-height:1.05;letter-spacing:-.035em;margin-top:8px}
+.muted{color:var(--muted)}
+#currentMeta{font-size:16px;line-height:1.45;margin-top:10px}
+.progress{height:7px;background:#2a3038;border-radius:999px;overflow:hidden;margin-top:18px}
+.current.shoot .progress{background:#d6dbe1}
+#bar{height:100%;background:currentColor;width:0}
+.countRow{display:flex;justify-content:space-between;align-items:baseline;margin-top:7px}
+#countdown{font-size:24px;font-weight:850;font-variant-numeric:tabular-nums}
+.next{padding:16px 20px;display:grid;grid-template-columns:110px 1fr;gap:14px;align-items:center}
+.nextTime{font-size:27px;font-weight:850;font-variant-numeric:tabular-nums}
+.nextTitle{font-size:22px;font-weight:800;line-height:1.1}
+.nextMeta{font-size:13px;color:var(--muted);margin-top:4px}
+.right{min-width:0;min-height:0}
+.rightCard{height:100%;padding:18px;display:flex;flex-direction:column}
+.head{display:flex;justify-content:space-between;align-items:flex-end;padding:0 4px 12px;gap:12px}
+.title{font-size:28px;font-weight:850;letter-spacing:-.03em}
+.version{font-size:12px;color:var(--muted)}
+.schedule{overflow-y:auto;scrollbar-width:none;min-height:0}
+.schedule::-webkit-scrollbar{display:none}
+.item{display:grid;grid-template-columns:108px 1fr auto;gap:12px;align-items:center;padding:13px 12px;border-top:1px solid var(--line);border-radius:12px}
+.item:first-child{border-top:0}
+.item.past{opacity:.34}
+.item.active{background:var(--panel2);outline:2px solid rgba(255,255,255,.10);opacity:1}
+.item.active.shoot{background:#f5f7fa;color:#0b0d10}
+.itemTime{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums}
+.itemTitle{font-size:19px;font-weight:780;line-height:1.15}
+.itemMeta{font-size:12px;color:var(--muted);margin-top:3px}
+.item.active.shoot .itemMeta{color:#5f6670}
+.badge{font-size:11px;font-weight:850;border:1px solid currentColor;border-radius:999px;padding:5px 8px}
+.item.active.shoot .badge{background:#0b0d10;color:#fff;border-color:#0b0d10}
+
+.trainBox{margin-top:16px;padding:13px 14px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.025)}
+.current.shoot .trainBox{border-color:#cbd1d8;background:#eef1f4}
+.trainTop,.trainMain{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.trainState{font-size:12px;font-weight:850;padding:5px 9px;border-radius:999px;border:1px solid currentColor}
+.trainState.risk{color:var(--danger)}
+.current.shoot .trainState.risk{color:#b52c2c}
+.trainMain{margin-top:5px}
+.trainMain span{font-size:14px;color:var(--muted)}
+.current.shoot .trainMain span{color:#5f6670}
+.trainMain strong{font-size:23px;font-variant-numeric:tabular-nums}
+.trainNote{font-size:11px;color:var(--muted);margin-top:6px}
+.current.shoot .trainNote{color:#6b727c}
+
+.cue{margin-top:16px;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:15px;background:#0f1318;border:1px solid var(--line)}
+.current.shoot .cue{background:#111318;border-color:#111318;color:#fff}
+.cueLabel{font-size:14px;font-weight:950;letter-spacing:.10em;padding:7px 10px;border-radius:9px;background:#2b323c}
+.current.shoot .cueLabel{background:#fff;color:#111318}
+.cueText{font-size:16px;font-weight:760}
+.trainRail{position:relative;height:11px;border-radius:999px;background:#2b3139;margin-top:10px;overflow:hidden}
+.current.shoot .trainRail{background:#d8dde2}
+.trainRail .riskSeg{position:absolute;top:0;bottom:0;background:#6f7885}
+.current.shoot .trainRail .riskSeg{background:#8a939e}
+.trainRail .nowPin{position:absolute;top:-3px;width:3px;height:17px;background:#fff;border-radius:2px;box-shadow:0 0 0 2px rgba(0,0,0,.2)}
+.current.shoot .trainRail .nowPin{background:#111318}
+.preflight{position:fixed;right:18px;bottom:14px;font-size:11px;color:#65707d;pointer-events:none}
+@media (orientation:landscape) and (max-height:820px){
+  .app{gap:12px;padding:12px}
+  .left{gap:10px}
+  .card{border-radius:18px}
+  .clockCard{padding:12px 18px}
+  #clock{font-size:70px}
+  #date{font-size:14px}
+  .current{padding:15px 18px}
+  #currentTitle{font-size:38px}
+  #currentTime{font-size:27px}
+  #currentMeta{font-size:14px}
+  .cue{margin-top:11px;padding:9px 11px}
+  .trainBox{margin-top:10px;padding:9px 11px}
+  .next{padding:11px 16px}
+  .nextTime{font-size:23px}
+  .nextTitle{font-size:19px}
+  .rightCard{padding:13px}
+  .head{padding-bottom:8px}
+  .title{font-size:25px}
+  .item{padding:8px 10px}
+  .itemTime{font-size:16px}
+  .itemTitle{font-size:16px}
+  .itemMeta{font-size:11px}
+  .badge{font-size:10px}
+}
+
+</style>
+</head>
+<body>
+<main class="app">
+<section class="left">
+  <div class="card clockCard">
+    <div class="eyebrow">CURRENT TIME</div>
+    <div id="clock">--:--:--</div>
+    <div id="date">2026年9月9日（水）</div>
+  </div>
+
+  <div class="card current" id="currentCard">
+    <div class="statusRow">
+      <div class="eyebrow">NOW</div>
+      <div class="statusPill" id="statusPill">待機</div>
+    </div>
+    <div id="currentTime">—</div>
+    <div id="currentTitle">撮影前</div>
+    <div class="muted" id="currentMeta">次の予定を確認してください。</div>
+    <div class="progress"><div id="bar"></div></div>
+    <div class="countRow"><span class="muted" id="countLabel">次の予定まで</span><span id="countdown">--:--</span></div>
+    
+<div class="cue" id="cue">
+  <div class="cueLabel" id="cueLabel">STANDBY</div>
+  <div class="cueText" id="cueText">次の収録枠を待機</div>
+</div>
+<div class="trainBox" id="trainBox">
+  <div class="trainTop">
+    <span class="eyebrow">TRAIN NOISE</span>
+    <span class="trainState" id="trainState">確認中</span>
+  </div>
+  <div class="trainMain"><span id="trainText">次の列車注意帯</span><strong id="trainCountdown">--:--</strong></div>
+  <div class="trainRail" id="trainRail"></div>
+  <div class="trainNote">注意帯は鳴海駅時刻表からの推定。実際のREC判断は現場音を優先。</div>
+</div>
+
+  </div>
+
+  <div class="card next">
+    <div><div class="eyebrow">NEXT</div><div class="nextTime" id="nextTime">—</div></div>
+    <div><div class="nextTitle" id="nextTitle">—</div><div class="nextMeta" id="nextMeta">—</div></div>
+  </div>
+</section>
+
+<section class="right">
+  <div class="card rightCard">
+    <div class="head">
+      <div><div class="eyebrow">9 SEP 2026 / ARIMATSU</div><div class="title">インタビュー撮影</div></div>
+      <div class="version">FINAL — iPad横置き</div>
+    </div>
+    <div class="schedule" id="schedule"></div>
+  </div>
+</section>
+</main>
+
+<script>
+const shootingDate="2026-09-09";
+const items=[{"start": "09:20", "end": "09:40", "title": "搬入・カメラ／照明セット", "type": "prep", "note": "室内・自然光を確認"}, {"start": "09:40", "end": "09:50", "title": "マイク・環境音テスト", "type": "prep", "note": "列車通過時の音をヘッドホン確認"}, {"start": "09:50", "end": "09:54", "title": "リハーサル", "type": "prep", "note": "話し始めと目線を確認"}, {"start": "09:55", "end": "09:59", "title": "インタビュー ①", "type": "shoot", "note": "列車通過直後を狙ってREC"}, {"start": "10:00", "end": "10:11", "title": "待機・B-roll・質問確認", "type": "wait", "note": "列車が重なりやすい時間帯"}, {"start": "10:13", "end": "10:17", "title": "インタビュー ②", "type": "shoot", "note": "優先撮影枠"}, {"start": "10:18", "end": "10:24", "title": "待機", "type": "wait", "note": "列車音を確認"}, {"start": "10:25", "end": "10:29", "title": "インタビュー ③", "type": "shoot", "note": "短めの回答を優先"}, {"start": "10:30", "end": "10:41", "title": "B-roll・画角変更", "type": "wait", "note": "列車が多い想定"}, {"start": "10:43", "end": "10:47", "title": "インタビュー ④", "type": "shoot", "note": "優先撮影枠"}, {"start": "10:48", "end": "11:11", "title": "休憩・物撮り・確認", "type": "wait", "note": "音の少ない瞬間は補足撮影可"}, {"start": "11:13", "end": "11:17", "title": "インタビュー ⑤", "type": "shoot", "note": "優先撮影枠"}, {"start": "11:18", "end": "11:30", "title": "撮り直し・補足", "type": "wait", "note": "ノイズ被りの回答を再収録"}, {"start": "11:43", "end": "11:47", "title": "予備撮影枠", "type": "shoot", "note": "必要時のみ使用"}];
+
+function dt(hm){return new Date(`${shootingDate}T${hm}:00+09:00`)}
+function fmt(ms){
+  if(ms<0) ms=0;
+  const s=Math.floor(ms/1000), m=Math.floor(s/60), sec=s%60;
+  if(m>=60){const h=Math.floor(m/60), rm=m%60;return `${h}:${String(rm).padStart(2,"0")}:${String(sec).padStart(2,"0")}`}
+  return `${String(m).padStart(2,"0")}:${String(sec).padStart(2,"0")}`;
+}
+function label(t){return t==="shoot"?"収録":t==="prep"?"準備":"待機"}
+
+const schedule=document.getElementById("schedule");
+items.forEach((it,i)=>{
+ const row=document.createElement("div");
+ row.className=`item ${it.type}`;row.dataset.idx=i;
+ row.innerHTML=`<div class="itemTime">${it.start}–${it.end}</div><div><div class="itemTitle">${it.title}</div><div class="itemMeta">${it.note}</div></div><div class="badge">${label(it.type)}</div>`;
+ schedule.appendChild(row);
+});
+
+function update(){
+ const now=new Date();
+ document.getElementById("clock").textContent=now.toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});
+ document.getElementById("date").textContent=now.toLocaleDateString("ja-JP",{year:"numeric",month:"long",day:"numeric",weekday:"short"});
+ const rows=[...document.querySelectorAll(".item")];
+ rows.forEach(r=>r.classList.remove("active","past"));
+ let active=-1,next=-1;
+ items.forEach((it,i)=>{
+   const s=dt(it.start),e=dt(it.end);
+   if(now>=s&&now<e) active=i;
+   if(next===-1&&now<s) next=i;
+   if(now>=e) rows[i].classList.add("past");
+ });
+ const card=document.getElementById("currentCard");
+ card.classList.remove("shoot");
+ if(active>=0){
+   const it=items[active],s=dt(it.start),e=dt(it.end);
+   rows[active].classList.add("active");
+   if(it.type==="shoot") card.classList.add("shoot");
+   document.getElementById("statusPill").textContent=label(it.type);
+   document.getElementById("currentTime").textContent=`${it.start}–${it.end}`;
+   document.getElementById("currentTitle").textContent=it.title;
+   document.getElementById("currentMeta").textContent=it.note;
+   document.getElementById("bar").style.width=`${Math.max(0,Math.min(100,((now-s)/(e-s))*100))}%`;
+   document.getElementById("countLabel").textContent="終了まで";
+   document.getElementById("countdown").textContent=fmt(e-now);
+   rows[active].scrollIntoView({block:"center",behavior:"smooth"});
+ } else {
+   document.getElementById("bar").style.width="0%";
+   document.getElementById("statusPill").textContent="待機";
+   if(next>=0){
+      const it=items[next];
+      document.getElementById("currentTime").textContent="待機中";
+      document.getElementById("currentTitle").textContent="次の予定を確認";
+      document.getElementById("currentMeta").textContent="列車音・園外音を確認しながら準備してください。";
+      document.getElementById("countLabel").textContent="次の予定まで";
+      document.getElementById("countdown").textContent=fmt(dt(it.start)-now);
+   } else {
+      const end=dt(items.at(-1).end);
+      if(now>=end){
+        document.getElementById("currentTime").textContent="完了";
+        document.getElementById("currentTitle").textContent="本日の撮影終了";
+        document.getElementById("currentMeta").textContent="撮り残しを確認してください。";
+        document.getElementById("countLabel").textContent="";
+        document.getElementById("countdown").textContent="";
+      }
+   }
+ }
+ let n=active>=0?(active+1<items.length?active+1:-1):next;
+ if(n>=0){
+   const it=items[n];
+   document.getElementById("nextTime").textContent=it.start;
+   document.getElementById("nextTitle").textContent=it.title;
+   document.getElementById("nextMeta").textContent=it.note;
+ }else{
+   document.getElementById("nextTime").textContent="—";
+   document.getElementById("nextTitle").textContent="予定なし";
+   document.getElementById("nextMeta").textContent="スケジュール終了";
+ }
+ 
+ const trainWindows=[{"start": "09:50", "end": "09:55"}, {"start": "09:59", "end": "10:12"}, {"start": "10:17", "end": "10:25"}, {"start": "10:29", "end": "10:43"}, {"start": "10:47", "end": "11:13"}, {"start": "11:17", "end": "11:43"}];
+ let trainRisk=false,nextTrain=null,currentTrainEnd=null;
+ for(const w of trainWindows){
+   const s=dt(w.start),e=dt(w.end);
+   if(now>=s&&now<e){trainRisk=true;currentTrainEnd=e;break;}
+   if(!nextTrain&&now<s) nextTrain=s;
+ }
+ const ts=document.getElementById("trainState");
+ ts.classList.toggle("risk",trainRisk);
+ if(trainRisk){
+   ts.textContent="注意帯";
+   document.getElementById("trainText").textContent="注意帯終了まで";
+   document.getElementById("trainCountdown").textContent=fmt(currentTrainEnd-now);
+ }else if(nextTrain){
+   ts.textContent="比較的静か";
+   document.getElementById("trainText").textContent="次の列車注意帯まで";
+   document.getElementById("trainCountdown").textContent=fmt(nextTrain-now);
+ }else{
+   ts.textContent="予定外";
+   document.getElementById("trainText").textContent="以降は現場判断";
+   document.getElementById("trainCountdown").textContent="—";
+ }
+
+ const cueLabel=document.getElementById("cueLabel"), cueText=document.getElementById("cueText");
+ if(active>=0 && items[active].type==="shoot" && !trainRisk){
+   cueLabel.textContent="REC";
+   cueText.textContent="収録中 — 音が良ければ続行";
+ }else if(trainRisk){
+   cueLabel.textContent="HOLD";
+   cueText.textContent="列車注意帯 — 音を確認";
+ }else if(active>=0){
+   cueLabel.textContent=items[active].type==="prep"?"SETUP":"STANDBY";
+   cueText.textContent=items[active].title;
+ }else{
+   cueLabel.textContent="STANDBY";
+   cueText.textContent="次の収録枠を待機";
+ }
+
+ const rail=document.getElementById("trainRail");
+ if(!rail.dataset.ready){
+   const dayStart=dt("09:20"),dayEnd=dt("11:47"),span=dayEnd-dayStart;
+   trainWindows.forEach(w=>{
+     const seg=document.createElement("div");seg.className="riskSeg";
+     const left=((dt(w.start)-dayStart)/span)*100;
+     const width=((dt(w.end)-dt(w.start))/span)*100;
+     seg.style.left=`${Math.max(0,left)}%`; seg.style.width=`${Math.max(0,width)}%`; rail.appendChild(seg);
+   });
+   const pin=document.createElement("div");pin.className="nowPin";pin.id="nowPin";rail.appendChild(pin);
+   rail.dataset.ready="1";
+ }
+ const dayStart=dt("09:20"),dayEnd=dt("11:47"),span=dayEnd-dayStart;
+ const pct=Math.max(0,Math.min(100,((now-dayStart)/span)*100));
+ document.getElementById("nowPin").style.left=`calc(${pct}% - 1px)`;
+
+}
+update();setInterval(update,1000);
+</script>
+<div class="preflight">9/9 有松・室内撮影 / iPad landscape</div></body>
+</html>
